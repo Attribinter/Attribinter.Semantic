@@ -1,0 +1,19 @@
+﻿<Project>
+
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="Attribinter.Logo" Version="1.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.16.0.82469" />
+    </ItemGroup>
+    
+</Project>
