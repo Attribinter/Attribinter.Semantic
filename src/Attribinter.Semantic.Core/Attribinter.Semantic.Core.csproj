@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Attribinter.Semantic</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>Attribinter.Semantic.Core</Title>
+        <Description>
+            Provides the core components of Attribinter related to semantically parsing attributes.
+        </Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Attribinter.Core" />
+    </ItemGroup>
+    
+</Project>
