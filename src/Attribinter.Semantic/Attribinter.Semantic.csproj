@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>Attribinter.Semantic</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>Attribinter.Semantic</Title>
+        <Description>
+            Semantically parses .NET attributes using the Roslyn API.
+        </Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Attribinter.Semantic.Core\Attribinter.Semantic.Core.csproj" />
+    </ItemGroup>
+
+</Project>

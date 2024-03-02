@@ -8,7 +8,7 @@
         <Authors>ErikWe</Authors>
         <PackageProjectUrl>https://github.com/Attribinter/Attribinter.Semantic</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Attribinter/Attribinter.Semantic</RepositoryUrl>
-        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageReadmeFile>README.nupkg.md</PackageReadmeFile>
         <PackageIcon>Logo.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
