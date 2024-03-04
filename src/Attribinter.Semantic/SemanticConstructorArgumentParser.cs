@@ -8,30 +8,36 @@ using System.Collections.Generic;
 /// <inheritdoc cref="ISemanticConstructorArgumentParser"/>
 public sealed class SemanticConstructorArgumentParser : ISemanticConstructorArgumentParser
 {
-    /// <summary>Instantiates a <see cref="SemanticConstructorArgumentParser"/>, parsing the constructor arguments of attributes.</summary>
-    public SemanticConstructorArgumentParser() { }
+    private readonly IConstructorParameterFactory ParameterFactory;
 
-    bool ISemanticConstructorArgumentParser.TryParse(ISemanticConstructorArgumentRecorder recorder, AttributeData attributeData)
+    /// <summary>Instantiates a <see cref="SemanticConstructorArgumentParser"/>, parsing the constructor arguments of attributes.</summary>
+    /// <param name="parameterFactory">Handles creation of <see cref="IConstructorParameter"/>.</param>
+    public SemanticConstructorArgumentParser(IConstructorParameterFactory parameterFactory)
+    {
+        ParameterFactory = parameterFactory ?? throw new ArgumentNullException(nameof(parameterFactory));
+    }
+
+    bool IArgumentParser<IConstructorParameter, TypedConstant, AttributeData>.TryParse(IArgumentRecorder<IConstructorParameter, TypedConstant> recorder, AttributeData attribute)
     {
         if (recorder is null)
         {
             throw new ArgumentNullException(nameof(recorder));
         }
 
-        if (attributeData is null)
+        if (attribute is null)
         {
-            throw new ArgumentNullException(nameof(attributeData));
+            throw new ArgumentNullException(nameof(attribute));
         }
 
-        if (attributeData.AttributeConstructor is not IMethodSymbol targetConstructor)
+        if (attribute.AttributeConstructor is not IMethodSymbol targetConstructor)
         {
             return false;
         }
 
-        return TryRecordArguments(recorder, targetConstructor.Parameters, attributeData.ConstructorArguments);
+        return TryRecordArguments(recorder, targetConstructor.Parameters, attribute.ConstructorArguments);
     }
 
-    private bool TryRecordArguments(ISemanticConstructorArgumentRecorder recorder, IReadOnlyList<IParameterSymbol> parameters, IReadOnlyList<TypedConstant> arguments)
+    private bool TryRecordArguments(IArgumentRecorder<IConstructorParameter, TypedConstant> recorder, IReadOnlyList<IParameterSymbol> parameters, IReadOnlyList<TypedConstant> arguments)
     {
         if (parameters.Count != arguments.Count)
         {
@@ -49,5 +55,5 @@ public sealed class SemanticConstructorArgumentParser : ISemanticConstructorArgu
         return true;
     }
 
-    private bool TryRecordArgument(ISemanticConstructorArgumentRecorder recorder, IParameterSymbol parameter, TypedConstant argument) => recorder.TryRecordData(parameter, argument);
+    private bool TryRecordArgument(IArgumentRecorder<IConstructorParameter, TypedConstant> recorder, IParameterSymbol parameter, TypedConstant argument) => recorder.TryRecordData(ParameterFactory.Create(parameter), argument);
 }

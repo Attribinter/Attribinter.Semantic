@@ -13,7 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageVersion Include="Attribinter.Core" Version="8.0.0-alpha.26" />
+        <PackageVersion Include="Attribinter.Common.Abstractions" Version="8.0.0-alpha.34" />
+        <PackageVersion Include="Attribinter.Common.DependencyInjection" Version="8.0.0-alpha.34" />
+        <PackageVersion Include="Attribinter.Core" Version="8.0.0-alpha.34" />
         <PackageVersion Include="Attribinter.Logo" Version="1.0.3" />
         <PackageVersion Include="Attribinter.Tests.Common" Version="8.0.0-alpha.9" />
     </ItemGroup>

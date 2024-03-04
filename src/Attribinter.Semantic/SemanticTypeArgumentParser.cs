@@ -8,22 +8,28 @@ using System.Collections.Generic;
 /// <inheritdoc cref="ISemanticTypeArgumentParser"/>
 public sealed class SemanticTypeArgumentParser : ISemanticTypeArgumentParser
 {
-    /// <summary>Instantiates a <see cref="SemanticTypeArgumentParser"/>, parsing the type arguments of attributes.</summary>
-    public SemanticTypeArgumentParser() { }
+    private readonly ITypeParameterFactory ParameterFactory;
 
-    bool ISemanticTypeArgumentParser.TryParse(ISemanticTypeArgumentRecorder recorder, AttributeData attributeData)
+    /// <summary>Instantiates a <see cref="SemanticTypeArgumentParser"/>, parsing the type arguments of attributes.</summary>
+    /// <param name="parameterFactory">Handles creation of <see cref="ITypeParameter"/>.</param>
+    public SemanticTypeArgumentParser(ITypeParameterFactory parameterFactory)
+    {
+        ParameterFactory = parameterFactory ?? throw new ArgumentNullException(nameof(parameterFactory));
+    }
+
+    bool IArgumentParser<ITypeParameter, ITypeSymbol, AttributeData>.TryParse(IArgumentRecorder<ITypeParameter, ITypeSymbol> recorder, AttributeData attribute)
     {
         if (recorder is null)
         {
             throw new ArgumentNullException(nameof(recorder));
         }
 
-        if (attributeData is null)
+        if (attribute is null)
         {
-            throw new ArgumentNullException(nameof(attributeData));
+            throw new ArgumentNullException(nameof(attribute));
         }
 
-        if (attributeData.AttributeClass is not INamedTypeSymbol attributeClass)
+        if (attribute.AttributeClass is not INamedTypeSymbol attributeClass)
         {
             return false;
         }
@@ -31,7 +37,7 @@ public sealed class SemanticTypeArgumentParser : ISemanticTypeArgumentParser
         return TryRecordArguments(recorder, attributeClass.TypeParameters, attributeClass.TypeArguments);
     }
 
-    private bool TryRecordArguments(ISemanticTypeArgumentRecorder recorder, IReadOnlyList<ITypeParameterSymbol> parameters, IReadOnlyList<ITypeSymbol> arguments)
+    private bool TryRecordArguments(IArgumentRecorder<ITypeParameter, ITypeSymbol> recorder, IReadOnlyList<ITypeParameterSymbol> parameters, IReadOnlyList<ITypeSymbol> arguments)
     {
         if (parameters.Count != arguments.Count)
         {
@@ -49,5 +55,5 @@ public sealed class SemanticTypeArgumentParser : ISemanticTypeArgumentParser
         return true;
     }
 
-    private bool TryRecordArgument(ISemanticTypeArgumentRecorder recorder, ITypeParameterSymbol parameter, ITypeSymbol argument) => recorder.TryRecordData(parameter, argument);
+    private bool TryRecordArgument(IArgumentRecorder<ITypeParameter, ITypeSymbol> recorder, ITypeParameterSymbol parameter, ITypeSymbol argument) => recorder.TryRecordData(ParameterFactory.Create(parameter), argument);
 }

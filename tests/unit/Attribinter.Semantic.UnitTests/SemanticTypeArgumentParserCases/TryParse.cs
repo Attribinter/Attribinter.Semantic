@@ -10,8 +10,8 @@ using Xunit;
 
 public sealed class TryParse
 {
-    private bool Target(ISemanticTypeArgumentRecorder recorder, AttributeData attributeData) => Target(Context.Parser, recorder, attributeData);
-    private static bool Target(ISemanticTypeArgumentParser parser, ISemanticTypeArgumentRecorder recorder, AttributeData attributeData) => parser.TryParse(recorder, attributeData);
+    private bool Target(IArgumentRecorder<ITypeParameter, ITypeSymbol> recorder, AttributeData attributeData) => Target(Context.Parser, recorder, attributeData);
+    private static bool Target(ISemanticTypeArgumentParser parser, IArgumentRecorder<ITypeParameter, ITypeSymbol> recorder, AttributeData attributeData) => parser.TryParse(recorder, attributeData);
 
     private readonly ParserContext Context = ParserContext.Create();
 
@@ -26,7 +26,7 @@ public sealed class TryParse
     [Fact]
     public void NullAttributeData_ThrowsArgumentNullException()
     {
-        var exception = Record.Exception(() => Target(Mock.Of<ISemanticTypeArgumentRecorder>(), null!));
+        var exception = Record.Exception(() => Target(Mock.Of<IArgumentRecorder<ITypeParameter, ITypeSymbol>>(), null!));
 
         Assert.IsType<ArgumentNullException>(exception);
     }
@@ -36,7 +36,7 @@ public sealed class TryParse
     {
         CustomAttributeData attributeData = new();
 
-        Mock<ISemanticTypeArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<ITypeParameter, ITypeSymbol>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -57,7 +57,7 @@ public sealed class TryParse
 
         CustomAttributeData attributeData = new() { AttributeClass = attributeClassMock.Object };
 
-        Mock<ISemanticTypeArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<ITypeParameter, ITypeSymbol>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -78,7 +78,7 @@ public sealed class TryParse
 
         CustomAttributeData attributeData = new() { AttributeClass = attributeClassMock.Object };
 
-        Mock<ISemanticTypeArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<ITypeParameter, ITypeSymbol>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -90,9 +90,13 @@ public sealed class TryParse
     [Fact]
     public void FalseReturningRecorder_ReturnsFalse()
     {
-        var parameter1 = Mock.Of<ITypeParameterSymbol>();
-        var parameter2 = Mock.Of<ITypeParameterSymbol>();
-        var parameter3 = Mock.Of<ITypeParameterSymbol>();
+        var parameterSymbol1 = Mock.Of<ITypeParameterSymbol>();
+        var parameterSymbol2 = Mock.Of<ITypeParameterSymbol>();
+        var parameterSymbol3 = Mock.Of<ITypeParameterSymbol>();
+
+        var parameter1 = Mock.Of<ITypeParameter>();
+        var parameter2 = Mock.Of<ITypeParameter>();
+        var parameter3 = Mock.Of<ITypeParameter>();
 
         var argument1 = Mock.Of<ITypeSymbol>();
         var argument2 = Mock.Of<ITypeSymbol>();
@@ -100,14 +104,18 @@ public sealed class TryParse
 
         Mock<INamedTypeSymbol> attributeClassMock = new();
 
-        attributeClassMock.Setup(static (type) => type.TypeParameters).Returns([parameter1, parameter2, parameter3]);
+        attributeClassMock.Setup(static (type) => type.TypeParameters).Returns([parameterSymbol1, parameterSymbol2, parameterSymbol3]);
         attributeClassMock.Setup(static (type) => type.TypeArguments).Returns([argument1, argument2, argument3]);
+
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol3)).Returns(parameter3);
 
         CustomAttributeData attributeData = new() { AttributeClass = attributeClassMock.Object };
 
-        Mock<ISemanticTypeArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<ITypeParameter, ITypeSymbol>> recorderMock = new();
 
-        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<ITypeParameterSymbol>(), It.IsAny<ITypeSymbol>())).Returns(true);
+        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<ITypeParameter>(), It.IsAny<ITypeSymbol>())).Returns(true);
         recorderMock.Setup((recorder) => recorder.TryRecordData(parameter2, argument2)).Returns(false);
 
         var result = Target(recorderMock.Object, attributeData);
@@ -123,22 +131,28 @@ public sealed class TryParse
     [Fact]
     public void TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
     {
-        var parameter1 = Mock.Of<ITypeParameterSymbol>();
-        var parameter2 = Mock.Of<ITypeParameterSymbol>();
+        var parameterSymbol1 = Mock.Of<ITypeParameterSymbol>();
+        var parameterSymbol2 = Mock.Of<ITypeParameterSymbol>();
+
+        var parameter1 = Mock.Of<ITypeParameter>();
+        var parameter2 = Mock.Of<ITypeParameter>();
 
         var argument1 = Mock.Of<ITypeSymbol>();
         var argument2 = Mock.Of<ITypeSymbol>();
 
         Mock<INamedTypeSymbol> attributeClassMock = new();
 
-        attributeClassMock.Setup(static (type) => type.TypeParameters).Returns([parameter1, parameter2]);
+        attributeClassMock.Setup(static (type) => type.TypeParameters).Returns([parameterSymbol1, parameterSymbol2]);
         attributeClassMock.Setup(static (type) => type.TypeArguments).Returns([argument1, argument2]);
+
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
 
         CustomAttributeData attributeData = new() { AttributeClass = attributeClassMock.Object };
 
-        Mock<ISemanticTypeArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<ITypeParameter, ITypeSymbol>> recorderMock = new();
 
-        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<ITypeParameterSymbol>(), It.IsAny<ITypeSymbol>())).Returns(true);
+        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<ITypeParameter>(), It.IsAny<ITypeSymbol>())).Returns(true);
 
         var result = Target(recorderMock.Object, attributeData);
 

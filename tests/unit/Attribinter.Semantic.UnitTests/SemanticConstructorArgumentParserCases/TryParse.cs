@@ -11,8 +11,8 @@ using Xunit;
 
 public sealed class TryParse
 {
-    private bool Target(ISemanticConstructorArgumentRecorder recorder, AttributeData attributeData) => Target(Context.Parser, recorder, attributeData);
-    private static bool Target(ISemanticConstructorArgumentParser parser, ISemanticConstructorArgumentRecorder recorder, AttributeData attributeData) => parser.TryParse(recorder, attributeData);
+    private bool Target(IArgumentRecorder<IConstructorParameter, TypedConstant> recorder, AttributeData attributeData) => Target(Context.Parser, recorder, attributeData);
+    private static bool Target(ISemanticConstructorArgumentParser parser, IArgumentRecorder<IConstructorParameter, TypedConstant> recorder, AttributeData attributeData) => parser.TryParse(recorder, attributeData);
 
     private readonly ParserContext Context = ParserContext.Create();
 
@@ -27,7 +27,7 @@ public sealed class TryParse
     [Fact]
     public void NullAttributeData_ThrowsArgumentNullException()
     {
-        var exception = Record.Exception(() => Target(Mock.Of<ISemanticConstructorArgumentRecorder>(), null!));
+        var exception = Record.Exception(() => Target(Mock.Of<IArgumentRecorder<IConstructorParameter, TypedConstant>>(), null!));
 
         Assert.IsType<ArgumentNullException>(exception);
     }
@@ -37,7 +37,7 @@ public sealed class TryParse
     {
         CustomAttributeData attributeData = new();
 
-        Mock<ISemanticConstructorArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<IConstructorParameter, TypedConstant>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -57,7 +57,7 @@ public sealed class TryParse
 
         CustomAttributeData attributeData = new() { AttributeConstructor = attributeConstructorMock.Object, ConstructorArguments = [] };
 
-        Mock<ISemanticConstructorArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<IConstructorParameter, TypedConstant>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -77,7 +77,7 @@ public sealed class TryParse
 
         CustomAttributeData attributeData = new() { AttributeConstructor = attributeConstructorMock.Object, ConstructorArguments = [argument] };
 
-        Mock<ISemanticConstructorArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<IConstructorParameter, TypedConstant>> recorderMock = new();
 
         var result = Target(recorderMock.Object, attributeData);
 
@@ -89,23 +89,31 @@ public sealed class TryParse
     [Fact]
     public async Task FalseReturningRecorder_ReturnsFalse()
     {
-        var parameter1 = Mock.Of<IParameterSymbol>();
-        var parameter2 = Mock.Of<IParameterSymbol>();
-        var parameter3 = Mock.Of<IParameterSymbol>();
+        var parameterSymbol1 = Mock.Of<IParameterSymbol>();
+        var parameterSymbol2 = Mock.Of<IParameterSymbol>();
+        var parameterSymbol3 = Mock.Of<IParameterSymbol>();
+
+        var parameter1 = Mock.Of<IConstructorParameter>();
+        var parameter2 = Mock.Of<IConstructorParameter>();
+        var parameter3 = Mock.Of<IConstructorParameter>();
 
         var argument1 = await TypedConstantStore.GetNext();
         var argument2 = await TypedConstantStore.GetNext();
         var argument3 = await TypedConstantStore.GetNext();
 
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol3)).Returns(parameter3);
+
         Mock<IMethodSymbol> attributeConstructorMock = new();
 
-        attributeConstructorMock.Setup(static (method) => method.Parameters).Returns([parameter1, parameter2, parameter3]);
+        attributeConstructorMock.Setup(static (method) => method.Parameters).Returns([parameterSymbol1, parameterSymbol2, parameterSymbol3]);
 
         CustomAttributeData attributeData = new() { AttributeConstructor = attributeConstructorMock.Object, ConstructorArguments = [argument1, argument2, argument3] };
 
-        Mock<ISemanticConstructorArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<IConstructorParameter, TypedConstant>> recorderMock = new();
 
-        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<IParameterSymbol>(), It.IsAny<TypedConstant>())).Returns(true);
+        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<IConstructorParameter>(), It.IsAny<TypedConstant>())).Returns(true);
         recorderMock.Setup((recorder) => recorder.TryRecordData(parameter2, argument2)).Returns(false);
 
         var result = Target(recorderMock.Object, attributeData);
@@ -121,21 +129,27 @@ public sealed class TryParse
     [Fact]
     public async Task TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
     {
-        var parameter1 = Mock.Of<IParameterSymbol>();
-        var parameter2 = Mock.Of<IParameterSymbol>();
+        var parameterSymbol1 = Mock.Of<IParameterSymbol>();
+        var parameterSymbol2 = Mock.Of<IParameterSymbol>();
+
+        var parameter1 = Mock.Of<IConstructorParameter>();
+        var parameter2 = Mock.Of<IConstructorParameter>();
 
         var argument1 = await TypedConstantStore.GetNext();
         var argument2 = await TypedConstantStore.GetNext();
 
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
+        Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
+
         Mock<IMethodSymbol> attributeConstructorMock = new();
 
-        attributeConstructorMock.Setup(static (method) => method.Parameters).Returns([parameter1, parameter2]);
+        attributeConstructorMock.Setup(static (method) => method.Parameters).Returns([parameterSymbol1, parameterSymbol2]);
 
         CustomAttributeData attributeData = new() { AttributeConstructor = attributeConstructorMock.Object, ConstructorArguments = [argument1, argument2] };
 
-        Mock<ISemanticConstructorArgumentRecorder> recorderMock = new();
+        Mock<IArgumentRecorder<IConstructorParameter, TypedConstant>> recorderMock = new();
 
-        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<IParameterSymbol>(), It.IsAny<TypedConstant>())).Returns(true);
+        recorderMock.Setup(static (recorder) => recorder.TryRecordData(It.IsAny<IConstructorParameter>(), It.IsAny<TypedConstant>())).Returns(true);
 
         var result = Target(recorderMock.Object, attributeData);
 

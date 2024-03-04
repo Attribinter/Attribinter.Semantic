@@ -26,7 +26,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\Attribinter.Semantic.Core\Attribinter.Semantic.Core.csproj" />
         <ProjectReference Include="..\..\..\src\Attribinter.Semantic.DependencyInjection\Attribinter.Semantic.DependencyInjection.csproj" />
-        <ProjectReference Include="..\..\..\src\Attribinter.Semantic\Attribinter.Semantic.csproj" />
     </ItemGroup>
 
 </Project>
