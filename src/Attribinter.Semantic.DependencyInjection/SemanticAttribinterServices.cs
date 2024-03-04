@@ -17,6 +17,8 @@ public static class SemanticAttribinterServices
             throw new ArgumentNullException(nameof(services));
         }
 
+        services.AddCommonAttribinter();
+
         services.AddSingleton<ISemanticTypeArgumentParser, SemanticTypeArgumentParser>();
         services.AddSingleton<ISemanticConstructorArgumentParser, SemanticConstructorArgumentParser>();
         services.AddSingleton<ISemanticNamedArgumentParser, SemanticNamedArgumentParser>();
