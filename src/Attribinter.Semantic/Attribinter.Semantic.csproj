@@ -13,6 +13,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Attribinter.Common.Abstractions" />
+    </ItemGroup>
+    
+    <ItemGroup>
         <ProjectReference Include="..\Attribinter.Semantic.Core\Attribinter.Semantic.Core.csproj" />
     </ItemGroup>
 

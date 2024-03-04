@@ -1,18 +1,26 @@
 ﻿namespace Attribinter.Semantic.SemanticTypeArgumentParserCases;
 
+using Moq;
+
 internal sealed class ParserContext
 {
     public static ParserContext Create()
     {
-        SemanticTypeArgumentParser parser = new();
+        Mock<ITypeParameterFactory> parameterFactoryMock = new();
 
-        return new(parser);
+        SemanticTypeArgumentParser parser = new(parameterFactoryMock.Object);
+
+        return new(parser, parameterFactoryMock);
     }
 
     public SemanticTypeArgumentParser Parser { get; }
 
-    private ParserContext(SemanticTypeArgumentParser parser)
+    public Mock<ITypeParameterFactory> ParameterFactoryMock { get; }
+
+    private ParserContext(SemanticTypeArgumentParser parser, Mock<ITypeParameterFactory> parameterFactoryMock)
     {
         Parser = parser;
+
+        ParameterFactoryMock = parameterFactoryMock;
     }
 }
