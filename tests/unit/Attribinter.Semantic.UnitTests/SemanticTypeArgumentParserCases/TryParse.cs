@@ -1,5 +1,7 @@
 ﻿namespace Attribinter.Semantic.SemanticTypeArgumentParserCases;
 
+using Attribinter.Parameters;
+
 using Microsoft.CodeAnalysis;
 
 using Moq;

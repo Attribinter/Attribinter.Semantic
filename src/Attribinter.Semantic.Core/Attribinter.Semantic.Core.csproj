@@ -14,6 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="Attribinter.Core" />
+        <PackageReference Include="Attribinter.Parameters.Core" />
     </ItemGroup>
     
 </Project>
