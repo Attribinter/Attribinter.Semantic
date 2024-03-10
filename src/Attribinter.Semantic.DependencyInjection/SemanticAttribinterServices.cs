@@ -1,5 +1,7 @@
 ﻿namespace Attribinter.Semantic;
 
+using Attribinter.Parameters;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using System;
@@ -17,7 +19,7 @@ public static class SemanticAttribinterServices
             throw new ArgumentNullException(nameof(services));
         }
 
-        services.AddCommonAttribinter();
+        services.AddAttribinterParameters();
 
         services.AddSingleton<ISemanticTypeArgumentParser, SemanticTypeArgumentParser>();
         services.AddSingleton<ISemanticConstructorArgumentParser, SemanticConstructorArgumentParser>();

@@ -1,5 +1,7 @@
 ﻿namespace Attribinter.Semantic.SemanticNamedArgumentParserCases;
 
+using Attribinter.Parameters;
+
 using Moq;
 
 internal sealed class ParserContext

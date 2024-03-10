@@ -1,5 +1,7 @@
 ﻿namespace Attribinter.Semantic;
 
+using Attribinter.Parameters;
+
 using Microsoft.CodeAnalysis;
 
 using System;
