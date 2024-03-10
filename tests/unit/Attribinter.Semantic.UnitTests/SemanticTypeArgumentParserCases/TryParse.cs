@@ -128,6 +128,11 @@ public sealed class TryParse
         recorderMock.Verify((recorder) => recorder.TryRecordData(parameter2, argument2), Times.Once());
 
         recorderMock.VerifyNoOtherCalls();
+
+        Context.ParameterFactoryMock.Verify((factory) => factory.Create(parameterSymbol1), Times.Once());
+        Context.ParameterFactoryMock.Verify((factory) => factory.Create(parameterSymbol2), Times.Once());
+
+        Context.ParameterFactoryMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -164,5 +169,10 @@ public sealed class TryParse
         recorderMock.Verify((recorder) => recorder.TryRecordData(parameter2, argument2), Times.Once());
 
         recorderMock.VerifyNoOtherCalls();
+
+        Context.ParameterFactoryMock.Verify((factory) => factory.Create(parameterSymbol1), Times.Once());
+        Context.ParameterFactoryMock.Verify((factory) => factory.Create(parameterSymbol2), Times.Once());
+
+        Context.ParameterFactoryMock.VerifyNoOtherCalls();
     }
 }
