@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis;
 using Moq;
 
 using System;
-using System.Threading.Tasks;
 
 using Xunit;
 
@@ -89,7 +88,7 @@ public sealed class TryParse
     }
 
     [Fact]
-    public async Task FalseReturningRecorder_ReturnsFalse()
+    public void FalseReturningRecorder_ReturnsFalse()
     {
         var parameterSymbol1 = Mock.Of<IParameterSymbol>();
         var parameterSymbol2 = Mock.Of<IParameterSymbol>();
@@ -99,9 +98,9 @@ public sealed class TryParse
         var parameter2 = Mock.Of<IConstructorParameter>();
         var parameter3 = Mock.Of<IConstructorParameter>();
 
-        var argument1 = await TypedConstantStore.GetNext();
-        var argument2 = await TypedConstantStore.GetNext();
-        var argument3 = await TypedConstantStore.GetNext();
+        var argument1 = TypedConstantStore.GetNext();
+        var argument2 = TypedConstantStore.GetNext();
+        var argument3 = TypedConstantStore.GetNext();
 
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
@@ -134,7 +133,7 @@ public sealed class TryParse
     }
 
     [Fact]
-    public async Task TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
+    public void TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
     {
         var parameterSymbol1 = Mock.Of<IParameterSymbol>();
         var parameterSymbol2 = Mock.Of<IParameterSymbol>();
@@ -142,8 +141,8 @@ public sealed class TryParse
         var parameter1 = Mock.Of<IConstructorParameter>();
         var parameter2 = Mock.Of<IConstructorParameter>();
 
-        var argument1 = await TypedConstantStore.GetNext();
-        var argument2 = await TypedConstantStore.GetNext();
+        var argument1 = TypedConstantStore.GetNext();
+        var argument2 = TypedConstantStore.GetNext();
 
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol1)).Returns(parameter1);
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterSymbol2)).Returns(parameter2);
