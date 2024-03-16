@@ -8,7 +8,6 @@ using Moq;
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Xunit;
 
@@ -36,7 +35,7 @@ public sealed class TryParse
     }
 
     [Fact]
-    public async Task FalseReturningRecorder_ReturnsFalse()
+    public void FalseReturningRecorder_ReturnsFalse()
     {
         var parameterName1 = "Foo1";
         var parameterName2 = "Foo2";
@@ -46,9 +45,9 @@ public sealed class TryParse
         var parameter2 = Mock.Of<INamedParameter>();
         var parameter3 = Mock.Of<INamedParameter>();
 
-        var argument1 = new KeyValuePair<string, TypedConstant>(parameterName1, await TypedConstantStore.GetNext());
-        var argument2 = new KeyValuePair<string, TypedConstant>(parameterName2, await TypedConstantStore.GetNext());
-        var argument3 = new KeyValuePair<string, TypedConstant>(parameterName3, await TypedConstantStore.GetNext());
+        var argument1 = new KeyValuePair<string, TypedConstant>(parameterName1, TypedConstantStore.GetNext());
+        var argument2 = new KeyValuePair<string, TypedConstant>(parameterName2, TypedConstantStore.GetNext());
+        var argument3 = new KeyValuePair<string, TypedConstant>(parameterName3, TypedConstantStore.GetNext());
 
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterName1)).Returns(parameter1);
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterName2)).Returns(parameter2);
@@ -77,7 +76,7 @@ public sealed class TryParse
     }
 
     [Fact]
-    public async Task TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
+    public void TrueReturningRecorder_RecordsAllArguments_ReturnsTrue()
     {
         var parameterName1 = "Foo1";
         var parameterName2 = "Foo2";
@@ -85,8 +84,8 @@ public sealed class TryParse
         var parameter1 = Mock.Of<INamedParameter>();
         var parameter2 = Mock.Of<INamedParameter>();
 
-        var argument1 = new KeyValuePair<string, TypedConstant>(parameterName1, await TypedConstantStore.GetNext());
-        var argument2 = new KeyValuePair<string, TypedConstant>(parameterName2, await TypedConstantStore.GetNext());
+        var argument1 = new KeyValuePair<string, TypedConstant>(parameterName1, TypedConstantStore.GetNext());
+        var argument2 = new KeyValuePair<string, TypedConstant>(parameterName2, TypedConstantStore.GetNext());
 
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterName1)).Returns(parameter1);
         Context.ParameterFactoryMock.Setup((factory) => factory.Create(parameterName2)).Returns(parameter2);
